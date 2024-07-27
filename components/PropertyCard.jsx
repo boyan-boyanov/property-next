@@ -24,7 +24,7 @@ const PropertyCard = ({ property }) => {
     }
   };
   return (
-    <div className="bg-white rounded-xl shadow-md relative">
+    <div className="rounded-xl shadow-md relative">
       <Image
         sizes="100vw"
         height={0}
