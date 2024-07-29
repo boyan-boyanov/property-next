@@ -2,12 +2,13 @@ import Image from "next/image";
 import React from "react";
 
 const PropertyImages = ({ images }) => {
+  const cloudImage = images[0].slice(0, 4) === "http";
   return (
     <section className="bg-blue-50 p-4">
       <div className="container mx-auto">
         {images.length === 1 ? (
           <Image
-            src={image[0]}
+            src={cloudImage ? images[0] : `/images/properties/${images[0]}`}
             alt=""
             className="object-cover h-[400px] mx-auto rounded-xl"
             width={1800}
@@ -26,7 +27,7 @@ const PropertyImages = ({ images }) => {
                 }
               >
                 <Image
-                  src={image}
+                  src={cloudImage ? image : `/images/properties/${image}`}
                   alt=""
                   className="object-cover h-[400px] w-full rounded-xl"
                   width={0}

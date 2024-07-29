@@ -22,8 +22,9 @@ const PropertyCard = ({ property }) => {
       return `${rates.nightly}/night`;
     }
   };
+  //check if image is from cloud or not
   const cloudImage = property.images[0].slice(0, 4) === "http";
-  console.log(cloudImage);
+
   return (
     <div className="rounded-xl shadow-md relative">
       <Image
