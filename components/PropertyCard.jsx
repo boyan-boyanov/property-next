@@ -22,13 +22,19 @@ const PropertyCard = ({ property }) => {
       return `${rates.nightly}/night`;
     }
   };
+  const cloudImage = property.images[0].slice(0, 4) === "http";
+  console.log(cloudImage);
   return (
     <div className="rounded-xl shadow-md relative">
       <Image
         sizes="100vw"
         height={0}
         width={0}
-        src={`/images/properties/${property.images[0]}`}
+        src={
+          cloudImage
+            ? `${property.images[0]}`
+            : `/images/properties/${property.images[0]}`
+        }
         alt=""
         className="w-full h-auto rounded-t-xl"
       />

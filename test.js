@@ -22,12 +22,14 @@ export const POST = async (request) => {
     await connectDB();
 
     const sessionUser = await getSessionUser();
+    console.log(sessionUser);
 
     if (!sessionUser || !sessionUser.userId) {
       return new Response("User ID is required", { status: 401 });
     }
 
     const { userId } = sessionUser;
+    console.log(userId);
 
     const formData = await request.formData();
 
@@ -36,9 +38,7 @@ export const POST = async (request) => {
     const images = formData
       .getAll("images")
       .filter((image) => image.name !== "");
-    console.log("IMAGES");
-    console.log(images);
-    console.log(amenities);
+
     //Create object to database
     const propertyData = {
       type: formData.get("type"),
@@ -67,45 +67,46 @@ export const POST = async (request) => {
       owner: userId,
     };
 
+    console.log(propertyData);
+
     //uploas images to cloudinary
-    const imageUploadPromises = [];
+    // const imageUploadPromises = [];
 
-    for (const image of images) {
-      const imageBuffer = await image.arrayBuffer();
-      const imageArray = Array.from(new Uint8Array(imageBuffer));
-      const imageData = Buffer.from(imageArray);
-      console.log(imageData);
-      //convert image to base64
-      const imageBase64 = imageData.toString("base64");
+    // for (const image of images) {
+    //   const imageBuffer = await image.arrayBuffer();
+    //   const imageArray = Array.from(new Uint8Array(imageBuffer));
+    //   const imageData = Buffer.from(imageArray);
 
-      //make request to upload to Cloudinary
-      const result = await cloudinary.uploader.upload(
-        `data:image/png;base64,${imageBase64}`,
-        {
-          folder: "BGproperty",
-        }
-      );
+    //   //convert image to base64
+    //   const imageBase64 = imageData.toString("base64");
 
-      imageUploadPromises.push(result.secure_url);
-      // //wait for all images to upload
-      const uploadedImages = await Promise.all(imageUploadPromises);
-      // // Add uploaded images to the propertyData object
+    //   //make request to upload to Cloudinary
+    //   const result = await cloudinary.uploader.upload(
+    //     `data:image/png;base64,${imageBase64}`,
+    //     {
+    //       folder: "BGproperty",
+    //     }
+    //   );
 
-      propertyData.images = uploadedImages;
-    }
+    //   imageUploadPromises.push(result.secure_url);
+    //   console.log(imageUploadPromises);
+    //   //wait for all images to upload
+    //   const uploadedImages = await Promise.all();
+    //   // Add uploaded images to the propertyData object
+    //   propertyData.images = uploadedImages;
+    // }
 
-    const newProperty = new Property(propertyData);
-    await newProperty.save();
+    // const newProperty = new Property(propertyData);
+    // await newProperty.save();
 
     return Response.redirect(
       `${process.env.NEXTAUTH_URL}/properties/${newProperty._id}`
     );
 
-    return new Response(JSON.stringify({ message: "successe" }), {
-      status: 200,
-    });
+    // return new Response(JSON.stringify({ message: "successe" }), {
+    //   status: 200,
+    // });
   } catch (error) {
-    //return new Response("Failed to add property", { status: 500 });
-    return new Response("Failed to add property", { amenities });
+    return new Response("Failed to add property", { status: 500 });
   }
 };
