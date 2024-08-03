@@ -1,73 +1,25 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
+import React from "react";
+import connectDB from "@/config/database";
+import Property from "@/models/Property";
+import { getSessionUser } from "@/utils/getSessionUser";
 import profileDefault from "@/assets/images/profile.png";
 import Image from "next/image";
-import Spinner from "@/components/Spinner";
-import Link from "next/link";
+import ProfileProperties from "@/components/ProfileProperties";
+import { convertToSerializableObject } from "@/utils/convertToObject";
 
-const ProfilePage = () => {
-  const { data: session } = useSession();
-  const profileImage = session?.user?.image;
-  const profileName = session?.user?.name;
-  const profileEmail = session?.user?.email;
+const ProfilePage = async () => {
+  await connectDB();
+  const sessionUser = await getSessionUser();
 
-  const [properties, setProperties] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { userId } = sessionUser;
 
-  useEffect(() => {
-    const fetchUserProperties = async (userId) => {
-      if (!userId) {
-        return;
-      }
+  if (!userId) {
+    throw new Error("User ID is required");
+  }
 
-      try {
-        const res = await fetch(`api/properties/user/${userId}`);
+  const propertiesDocs = await Property.find({ owner: userId }).lean();
 
-        if (res.status === 200) {
-          const data = await res.json();
-          setProperties(data);
-        }
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    //fetch if session
-    if (session?.user?.id) {
-      fetchUserProperties(session.user.id);
-    }
-  }, [session]);
-
-  const handleDeleteProperty = async (propertyId) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this property?"
-    );
-    if (!confirmed) {
-      return;
-    }
-
-    try {
-      const res = await fetch(`/api/properties/${propertyId}`, {
-        method: "DELETE",
-      });
-
-      if (res.status === 200) {
-        const updatedProperties = properties.filter(
-          (property) => property._id !== propertyId
-        );
-
-        setProperties(updatedProperties);
-        alert("Property deleted");
-      } else {
-        alert("Property NOT Deleted");
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const properties = propertiesDocs.map(convertToSerializableObject);
 
   return (
     <section className="bg-blue-50">
@@ -79,7 +31,7 @@ const ProfilePage = () => {
               <div className="mb-4">
                 <Image
                   className="h-32 w-32 md:h-48 md:w-48 rounded-full mx-auto md:mx-0"
-                  src={profileImage || profileDefault}
+                  src={sessionUser.user.image || profileDefault}
                   alt="User"
                   width={200}
                   height={200}
@@ -87,60 +39,16 @@ const ProfilePage = () => {
                 />
               </div>
               <h2 className="text-2xl mb-4">
-                <span className="font-bold block">Name: </span> {profileName}
+                <span className="font-bold block">Name: </span> {}
               </h2>
               <h2 className="text-2xl">
-                <span className="font-bold block">Email: </span> {profileEmail}
+                <span className="font-bold block">Email: </span> {}
               </h2>
             </div>
 
             <div className="md:w-3/4 md:pl-4">
               <h2 className="text-xl font-semibold mb-4">Your Listings</h2>
-              {!loading && properties.length === 0 && (
-                <p>You have no property listings</p>
-              )}
-              {loading ? (
-                <Spinner loading={loading} />
-              ) : (
-                properties.map((property) => (
-                  <div key={property._id} className="mb-10">
-                    <Link href={`/properties/${property._id}`}>
-                      <Image
-                        className="h-32 w-full rounded-md object-cover"
-                        src={property.images[0]}
-                        alt=""
-                        width={500}
-                        height={100}
-                        priority={true}
-                      />
-                    </Link>
-                    <div className="mt-2">
-                      <p className="text-lg font-semibold">{property.name}</p>
-                      <p className="text-gray-600">
-                        {property.location.stree} {property.location.city}{" "}
-                        {property.location.state}
-                      </p>
-                    </div>
-                    <div className="mt-2">
-                      <Link
-                        href={`/properties/${property._id}/edit`}
-                        className="bg-blue-500 text-white px-3 py-3 rounded-md mr-2 hover:bg-blue-600"
-                      >
-                        Edit
-                      </Link>
-                      <button
-                        className="bg-red-500 text-white px-3 py-2 rounded-md hover:bg-red-600"
-                        type="button"
-                        onClick={() => {
-                          handleDeleteProperty(property._id);
-                        }}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                ))
-              )}
+              <ProfileProperties properties={properties} />
             </div>
           </div>
         </div>
