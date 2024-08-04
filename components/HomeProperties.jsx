@@ -1,10 +1,14 @@
 import React from "react";
 import PropertyCard from "./PropertyCard";
 import Link from "next/link";
-import { fetchProperties } from "@/utils/requests";
+import connectDB from "@/config/database";
+import Property from "@/models/Property";
 
 const HomeProperties = async () => {
-  const properties = await fetchProperties();
+  await connectDB();
+
+  //const recentProperties = await Property.find({}).sort({createdAt: -1}).limit(3).lean();
+  const properties = await Property.find({}).lean();
   let recentProperties = properties;
   if (properties) {
     recentProperties = properties

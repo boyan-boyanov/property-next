@@ -3,9 +3,8 @@ import React from "react";
 
 const PropertyHeaderImage = ({ image }) => {
   //check if image is from cloud or not
-  console.log(image);
   const cloudImage = image.slice(0, 4) === "http";
-  console.log(cloudImage);
+
   return (
     <section>
       <div className="container-xl m-auto">

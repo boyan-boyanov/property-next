@@ -1,31 +1,32 @@
 "use client";
+import addPropert from "@/app/actions/addProperty";
 import React, { useEffect, useState } from "react";
 
 const PropertyAddForm = () => {
   const [mounted, setMouned] = useState(false);
   const [fields, setFields] = useState({
-    name: "Boston Commons Retreat",
+    name: "",
     type: "Apartment",
     description: "",
     location: {
-      street: "120 Tremont Street",
-      city: "Boston",
-      state: "MA",
-      zipcode: "02108",
+      street: "",
+      city: "",
+      state: "",
+      zipcode: "",
     },
-    beds: 2,
-    baths: 1,
-    square_feet: 1500,
-    amenities: ["Wifi"],
+    beds: "",
+    baths: "",
+    square_feet: "",
+    amenities: [],
     rates: {
-      weekly: 1100,
-      monthly: 4200,
+      weekly: "",
+      monthly: "",
       nightly: "",
     },
     seller_info: {
-      name: "John Doe",
-      email: "john@gmail.com",
-      phone: "617-555-5555",
+      name: "",
+      email: "",
+      phone: "",
     },
     images: [],
   });
@@ -89,11 +90,7 @@ const PropertyAddForm = () => {
   console.log(fields.images);
   return (
     mounted && (
-      <form
-        action="/api/properties"
-        method="POST"
-        encType="multipart/form-data"
-      >
+      <form action={addPropert}>
         <h2 className="text-3xl text-center font-semibold mb-6">
           Add Property
         </h2>

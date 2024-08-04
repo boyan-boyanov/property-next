@@ -27,7 +27,7 @@ const Navbar = () => {
     if (!providers) {
       setAuthProviders();
     }
-  }, [providers]);
+  }, [providers, setProviders]);
 
   return (
     <nav className="bg-blue-700 border-b border-blue-500">
@@ -177,6 +177,7 @@ const Navbar = () => {
                       alt=""
                       width={40}
                       height={40}
+                      priority={true}
                     />
                   </button>
                 </div>

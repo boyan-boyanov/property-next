@@ -1,9 +1,11 @@
 import React from "react";
 import PropertyCard from "@/components/PropertyCard";
-import { fetchProperties } from "@/utils/requests";
+import connectDB from "@/config/database";
+import Property from "@/models/Property";
 
 const PropertiesPage = async () => {
-  const properties = await fetchProperties();
+  await connectDB();
+  const properties = await Property.find({}).lean();
 
   //Sort properties by date
   if (properties) {

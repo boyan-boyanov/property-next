@@ -28,6 +28,7 @@ const PropertyCard = ({ property }) => {
   return (
     <div className="rounded-xl shadow-md relative">
       <Image
+        priority={true}
         sizes="100vw"
         height={0}
         width={0}
