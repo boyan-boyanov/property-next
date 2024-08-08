@@ -7,8 +7,11 @@ import {
   FaCheck,
   FaMapMarker,
 } from "react-icons/fa";
+import PropertyMap from "./PropertyMap";
+import { convertToSerializableObject } from "@/utils/convertToObject";
 
 const PropertyDetails = ({ property }) => {
+  const propertyPlain = convertToSerializableObject(property);
   return (
     <main>
       <div className="bg-white p-6 rounded-lg shadow-md text-center md:text-left">
@@ -92,7 +95,7 @@ const PropertyDetails = ({ property }) => {
         </ul>
       </div>
       <div className=" bg-white p-6 rounded-lg shadow-md mt-6">
-        <div id="map"></div>
+        <PropertyMap property={propertyPlain} />
       </div>
     </main>
   );
