@@ -2,10 +2,15 @@ import React from "react";
 import PropertyCard from "@/components/PropertyCard";
 import connectDB from "@/config/database";
 import Property from "@/models/Property";
+import Pagination from "@/components/Pagination";
 
-const PropertiesPage = async () => {
+const PropertiesPage = async ({ searchParams: { page = 1, pageSize = 6 } }) => {
   await connectDB();
-  const properties = await Property.find({}).lean();
+  //pagination
+  const skip = (page - 1) * pageSize;
+  const total = await Property.countDocuments({});
+
+  const properties = await Property.find({}).skip(skip).limit(pageSize);
 
   //Sort properties by date
   if (properties) {
@@ -23,6 +28,11 @@ const PropertiesPage = async () => {
             ))}
           </div>
         )}
+        <Pagination
+          page={parseInt(page)}
+          pageSize={parseInt(pageSize)}
+          totalItems={total}
+        />
       </div>
     </section>
   );
