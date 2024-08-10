@@ -4,21 +4,26 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import messageAsRead from "@/app/actions/messageAsRead";
 import deleteMessage from "@/app/actions/deleteMessage";
+import { useGlobalContext } from "@/contex/GlobalContex";
 
 const MessageCard = ({ message }) => {
   const [isRead, setIsRead] = useState(message.read);
   const [isDelete, setIsDelete] = useState(false);
 
+  const { setUnreadCount } = useGlobalContext();
+
   const handleReadClick = async () => {
     const read = await messageAsRead(message._id);
 
     setIsRead(read);
+    setUnreadCount((prev) => (read ? prev - 1 : prev + 1));
     toast.success(`Marked As ${read ? "Read" : "New"}`);
   };
 
   const handleDeletClick = async () => {
     await deleteMessage(message._id);
     setIsDelete(true);
+    setUnreadCount((prev) => (isRead ? prev : prev - 1));
     toast.success("Message Deleted");
   };
 
