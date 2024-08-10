@@ -1,4 +1,4 @@
-/** @type {import('next').NextConfig} */
+//** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
     remotePatterns: [
@@ -16,7 +16,8 @@ const nextConfig = {
   },
   webpack: (config, options) => {
     if (!options.dev) {
-      config.devtool = options.isServer ? false : "your-custom-devtool";
+      // For production client-side builds, use a valid devtool option
+      config.devtool = options.isServer ? false : "source-map"; // Example valid devtool
     }
     return config;
   },
